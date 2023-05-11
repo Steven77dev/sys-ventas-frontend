@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
   });
   error: string="";
   submitted=false;
+  cargando: boolean = false;
   constructor(
     private router: Router,
     private fb: FormBuilder, 
@@ -40,6 +41,7 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(email, password).subscribe( {
       next: (data: any) => {
+        this.cargando = true;
         if(data.success){
           this.mensajeToast.showSuccess('Bienvenido', data.message);
           setTimeout(() => {
@@ -47,7 +49,6 @@ export class LoginComponent implements OnInit {
           }, 2000);
           
         } else{
-          
           this.mensajeToast.showError('Error', data.message);
           
         }
@@ -55,7 +56,9 @@ export class LoginComponent implements OnInit {
       error: (errorResponse: any) => {
         this.error = errorResponse;
       },
-      complete: () => {
+      complete: () => {      
+          this.cargando = false;
+       
         
       },
     }

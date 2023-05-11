@@ -1,6 +1,6 @@
 <div class="login-container " >
 
-  <div class="login-card">
+  <div class="login-card card">
     <h1>Iniciar sesión</h1>
     <form [formGroup]="loginForm" (ngSubmit)="login()" class="p-fluid">
       <div class="field">
@@ -23,5 +23,6 @@
       </div>
     </form>
     <p-toast position="top-right"></p-toast>
+    <app-loading [show]="cargando"></app-loading>
   </div>
 </div>

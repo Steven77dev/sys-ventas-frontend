@@ -13,11 +13,16 @@ import { CuadreCajaComponent } from './ingresos/cuadre-caja/cuadre-caja.componen
 import {ToastModule} from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import {DropdownModule} from 'primeng/dropdown';
+import { LoadingComponent } from './compartido/loading/loading.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { AtencionMesasComponent } from './atencion-mesas/atencion-mesas.component';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    CuadreCajaComponent
+    CuadreCajaComponent,
+    LoadingComponent,
+    AtencionMesasComponent
   ],
   imports: [
     HttpClientModule,
@@ -30,7 +35,8 @@ import {DropdownModule} from 'primeng/dropdown';
     BrowserAnimationsModule,
     ToastModule,
     DropdownModule,
-    FormsModule
+    FormsModule,
+    ProgressSpinnerModule
     
   ],
   providers: [MessageService],
