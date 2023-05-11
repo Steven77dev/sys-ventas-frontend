@@ -15,7 +15,8 @@ import { MessageService } from 'primeng/api';
 import {DropdownModule} from 'primeng/dropdown';
 import { LoadingComponent } from './compartido/loading/loading.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { AtencionMesasComponent } from './atencion-mesas/atencion-mesas.component';
+import { AtencionMesasComponent } from './ingresos/atencion-mesas/atencion-mesas.component';
+import {CalendarModule} from 'primeng/calendar';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,7 +37,8 @@ import { AtencionMesasComponent } from './atencion-mesas/atencion-mesas.componen
     ToastModule,
     DropdownModule,
     FormsModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    CalendarModule
     
   ],
   providers: [MessageService],
