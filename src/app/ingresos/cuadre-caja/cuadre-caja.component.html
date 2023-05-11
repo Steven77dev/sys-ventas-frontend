@@ -1,0 +1,24 @@
+<div class="card">
+    <h5>Cuadre de caja</h5>
+    <div class="field">
+        <label htmlFor="Caja" for="firstname1">Cajha</label>
+        <input id="firstname1" type="text" pInputText class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+    </div>
+    <div class="field">
+        <label for="lastname1">Lastname</label>
+        <input id="lastname1" type="text" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+    </div>
+
+    <div class="formgrid grid">
+        <div class="field col">
+            <label for="firstname2">Caja</label>
+            <p-dropdown class="w-full text-base text-color surface-overlay"  
+            [options]="cajas" [(ngModel)]="cajaSeleccionada" optionLabel="desCaja" optionValue="codCaja"></p-dropdown>
+          </div>
+        <div class="field col">
+            <label for="lastname2">Importe</label>
+            <input id="lastname2" type="text" pInputText class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+    </div>
+
+</div>
