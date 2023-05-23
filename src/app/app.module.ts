@@ -8,40 +8,35 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PasswordModule } from 'primeng/password'; 
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { CuadreCajaComponent } from './ingresos/cuadre-caja/cuadre-caja.component'; 
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations'; 
 import {ToastModule} from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import {DropdownModule} from 'primeng/dropdown';
 import { LoadingComponent } from './compartido/loading/loading.component';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { AtencionMesasComponent } from './ingresos/atencion-mesas/atencion-mesas.component';
-import {CalendarModule} from 'primeng/calendar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner'; 
+import { CommonModule, HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { NotfoundComponent } from './modulos/notfound/notfound.component';
+import { AppLayoutModule } from './layout/app.layout.module';
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    CuadreCajaComponent,
+    LoginComponent, 
     LoadingComponent,
-    AtencionMesasComponent
+    NotfoundComponent
   ],
   imports: [
-    HttpClientModule,
-    BrowserModule,
-    AppRoutingModule,
+    AppRoutingModule, 
+    ProgressSpinnerModule,
+    PasswordModule,
     InputTextModule,
     ButtonModule,
-    ReactiveFormsModule,
-    PasswordModule, 
-    BrowserAnimationsModule,
     ToastModule,
-    DropdownModule,
     FormsModule,
-    ProgressSpinnerModule,
-    CalendarModule
+    ReactiveFormsModule,
+    AppLayoutModule,
     
   ],
-  providers: [MessageService],
+  providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy},MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

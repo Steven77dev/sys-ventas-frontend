@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
         if(data.success){
           this.mensajeToast.showSuccess('Bienvenido', data.message);
           setTimeout(() => {
-            this.router.navigate(['/cuadre-caja']);
+            this.router.navigate(['/dashboard']);
           }, 2000);
           
         } else{

@@ -19,6 +19,8 @@
     "@angular/platform-browser": "~13.3.0",
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
+    "chart.js": "^4.3.0",
+    "node-sass": "^6.0.1",
     "primeflex": "^3.3.0",
     "primeicons": "^6.0.1",
     "primeng": "^13.0.2",

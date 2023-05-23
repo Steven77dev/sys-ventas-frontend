@@ -1,0 +1,10 @@
+@import "assets/layout/styles/layout.scss";
+
+.p-dropdown{
+  width: 100%;
+  border-color: var(--surface-border);
+}
+
+.p-dropdown .p-dropdown-label {
+  margin: -4px;
+}

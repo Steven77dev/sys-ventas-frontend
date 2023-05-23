@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CajaModel } from 'src/app/models/caja';
-@Component({
-  selector: 'app-cuadre-caja',
-  templateUrl: './cuadre-caja.component.html',
-  styleUrls: ['./cuadre-caja.component.css']
+@Component({ 
+  templateUrl: './cuadrecaja.component.html'
 })
 
 
