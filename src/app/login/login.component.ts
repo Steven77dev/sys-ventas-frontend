@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../servicios/seguridad/AuthService';
-import { MensajesToastService } from '../servicios/compartido/mensajes-toast.service';
-import { MessageService } from 'primeng/api';
+import { MensajesToastService } from '../servicios/compartido/mensajes-toast.service'; 
 import { PrimeNGConfig } from 'primeng/api';
+import { IniciarSesionRequest } from '../models/usuarios/login/iniciar-sesion-request.model';
+import { InicioSesionService } from '../servicios/usuarios/login/iniciar-sesion.service'; 
+import { RootObjectSesionResponse } from '../models/usuarios/login/sesion-response.model';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ import { PrimeNGConfig } from 'primeng/api';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required]],
     password: ['', [Validators.required]],
   });
   error: string="";
@@ -22,13 +23,22 @@ export class LoginComponent implements OnInit {
   cargando: boolean = false;
   constructor(
     private router: Router,
-    private fb: FormBuilder, 
-    private authService: AuthService,  
+    private fb: FormBuilder,  
     private mensajeToast: MensajesToastService,
+    private iniciarSesion: InicioSesionService,
     private primengConfig: PrimeNGConfig) {}
 
   ngOnInit() { 
     this.primengConfig.ripple = true;
+    
+      // Verificar si hay información de inicio de sesión almacenada en localStorage
+      const token = localStorage.getItem('token');
+    
+      if (token) {
+        // Redirigir al usuario al panel de control (dashboard)
+        this.router.navigate(['/dashboard']);
+      }
+    
   }
 
   login() {
@@ -39,17 +49,20 @@ export class LoginComponent implements OnInit {
     const email = this.loginForm.value.email;
     const password = this.loginForm.value.password;
 
-    this.authService.login(email, password).subscribe( {
-      next: (data: any) => {
+    const request: IniciarSesionRequest = new IniciarSesionRequest(email, password);
+
+    this.iniciarSesion.iniciarSesion(request).subscribe({
+      next: (data: RootObjectSesionResponse) => {
         this.cargando = true;
-        if(data.success){
-          this.mensajeToast.showSuccess('Bienvenido', data.message);
+        if(data.codigo==0 && (data.respuesta.estado==8 || data.respuesta.estado==1)){
+          this.mensajeToast.showSuccess('Bienvenido', data.respuesta.descripcion);
+          localStorage.setItem("token", data.respuesta.sesion);
           setTimeout(() => {
             this.router.navigate(['/dashboard']);
           }, 2000);
           
         } else{
-          this.mensajeToast.showError('Error', data.message);
+          this.mensajeToast.showError('Error', data.respuesta.descripcion);
           
         }
       },
@@ -61,7 +74,6 @@ export class LoginComponent implements OnInit {
        
         
       },
-    }
-  );
+     });
   }
 }

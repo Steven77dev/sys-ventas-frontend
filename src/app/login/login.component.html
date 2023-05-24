@@ -4,10 +4,10 @@
     <h1>Iniciar sesión</h1>
     <form [formGroup]="loginForm" (ngSubmit)="login()" class="p-fluid">
       <div class="field">
-        <label htmlFor="email">Correo electrónico</label>
+        <label htmlFor="email">Usuario</label>
         <input pInputText id="email" formControlName="email" />
         <small class="p-error" *ngIf="loginForm.controls['email'].invalid && loginForm.controls['email'].touched">
-          Ingrese un correo válido.
+          Ingrese un usuario válido.
         </small>
       </div>
       <div class="field">

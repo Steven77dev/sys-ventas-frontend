@@ -11,16 +11,17 @@
     <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button" (click)="layoutService.showProfileSidebar()">
         <i class="pi pi-ellipsis-v"></i>
     </button>
-
+    
+    
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <button class="p-link layout-topbar-button">
-            <i class="pi pi-calendar"></i>
-            <span>Calendar</span>
-        </button>
+        
         <button class="p-link layout-topbar-button">
             <i class="pi pi-user"></i>
-            <span>Profile</span>
+            <span>Perfil</span>
         </button>
-      
+        <button class="p-link layout-topbar-button" (click)="cerrarSesion()">
+            <i class="pi pi-power-off"></i>
+            <span >Cerrar sesión</span>
+        </button>
     </div>
 </div>

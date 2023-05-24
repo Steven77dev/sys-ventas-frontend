@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { CuadreCajaRoutingModule } from './cuadrecaja-routing.module'; 
 import { DropdownModule } from 'primeng/dropdown';
 import { CuadreCajaComponent } from './cuadrecaja.component';
+import { CalendarModule } from 'primeng/calendar';
+import { InputTextModule } from 'primeng/inputtext';
 
 // Importa los módulos de PrimeNG que necesites
 
@@ -16,6 +18,8 @@ import { CuadreCajaComponent } from './cuadrecaja.component';
     CommonModule, 
     FormsModule,
     DropdownModule,
+    InputTextModule,
+    CalendarModule,
     CuadreCajaRoutingModule
     // Importa los módulos de PrimeNG que necesites
   ]

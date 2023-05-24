@@ -7,7 +7,7 @@ import { CajaModel } from 'src/app/models/caja';
 
 export class CuadreCajaComponent implements OnInit {
   cajas!: CajaModel[];
-  fechaApertura: Date = new Date();
+  fechaApertura!: Date;
   cajaSeleccionada!: CajaModel;
   constructor() {
     this.cajas = [

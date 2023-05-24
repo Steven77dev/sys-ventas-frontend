@@ -1,3 +1,6 @@
 export const environment = {
-  production: true
+  production: true,
+  apiRest: {
+    host: "https://localhost:8001/api"
+    }
 };

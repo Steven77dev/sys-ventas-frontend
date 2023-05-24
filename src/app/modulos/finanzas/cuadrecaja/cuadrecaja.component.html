@@ -1,27 +1,19 @@
 <div class="card">
-    <h5>Cuadre de caja</h5>
-    <div class="field">
-        <label htmlFor="Caja" for="firstname1">Cajha</label>
-        <input id="firstname1" type="text" pInputText class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-    </div>
-    <div class="field">
-        <label for="lastname1">Lastname</label>
-        <input id="lastname1" type="text" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-    </div>
-
-    <div class="formgrid grid">
-        <div class="field col">
+    <h5>Cuadrar caja</h5>
+    
+    <div class="p-fluid p-formgrid grid">
+        <div class="field col-12">
             <label for="firstname2">Caja</label>
-            <p-dropdown class="w-full text-base text-color surface-overlay"  
+            <p-dropdown name="caja" 
             [options]="cajas" [(ngModel)]="cajaSeleccionada" optionLabel="desCaja" optionValue="codCaja"></p-dropdown>
         </div>
-        <div class="field col">
-            <label for="firstname2">Fecha</label>
-            <p-calendar [(ngModel)]="fechaApertura"></p-calendar>
+        <div class="field col-12 md:col-6">
+            <label for="fecha">Fecha</label>
+            <p-calendar  name="fechaApertura"   [(ngModel)]="fechaApertura"></p-calendar>
         </div>
-        <div class="field col">
+        <div class="field col-12 md:col-6">
             <label for="lastname2">Importe</label>
-            <input id="lastname2" type="text" pInputText class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            <input id="lastname2" name="lastname2" type="text" pInputText >
         </div>
     </div>
 
