@@ -30,7 +30,7 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Comercial',
                 items: [
-                    { label: 'Atención de mesas', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
+                    { label: 'Atención de mesas', icon: 'pi pi-fw pi-id-card', routerLink: ['/comercial/atencion-mesas'] },
                
                 ]
             },

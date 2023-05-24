@@ -15,10 +15,7 @@ import { NotfoundComponent } from './modulos/notfound/notfound.component';
               //{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
               { path: 'dashboard', loadChildren: () => import('./modulos/dashboard/dashboard.module').then(m => m.DashboardModule) }, 
               { path: 'finanzas', loadChildren: () => import('./modulos/finanzas/finanzas.module').then(m => m.FinanzasModule) },
-              /*{ path: 'utilities', loadChildren: () => import('./demo/components/utilities/utilities.module').then(m => m.UtilitiesModule) },
-              { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },
-              { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
-              { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) }*/
+              { path: 'comercial', loadChildren: () =>  import('./modulos/comercial/comercial.module').then(m => m.ComercialModule) },
           ]
       }, 
       
