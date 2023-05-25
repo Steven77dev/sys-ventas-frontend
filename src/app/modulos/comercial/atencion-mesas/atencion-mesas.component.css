@@ -1,0 +1,81 @@
+.mesa-grid-item .mesa-monto {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.mesa-grid-item .mesa-grid-item-top, .mesa-grid-item .mesa-grid-item-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mesa-nro-icon {
+    vertical-align: middle;
+    margin-right: .5rem;
+}
+
+.mesa-nro {
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.mesa-grid-item .mesa-grid-item-content {
+    text-align: center;
+}
+
+.mesa-estado {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.mesa-cliente {
+    margin: 0 0 1rem;
+}
+
+.mesa-grid-item {
+    margin: .5em;
+    border: 1px solid var(--surface-border);
+    cursor: pointer;
+}
+
+.mesa-disponible{
+    background-color: #C8E6C9 !important;
+    color: #256029;
+}
+
+.mesa-nodisponible{
+    background-color: #FFCDD2 !important;
+    color:#c63737; 
+}
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+ 
+
+.colCantidad {
+    display: inline-flex; 
+    width: 100%;
+}
+  
+
+
+
+.btnAgregar{
+    border-radius: 0 !important;
+}
+ 
+.btnLimpiar{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.inputCantidad input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}

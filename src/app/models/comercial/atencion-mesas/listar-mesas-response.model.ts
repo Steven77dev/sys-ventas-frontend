@@ -7,7 +7,7 @@ export class MesasLocalResponse{
     public  desEstadoRegistro!:string;
     public  mesaPrincipal!:string;
     public puntoAtencion!:string;
-    public  montoTotal!:string;
+    public  montoTotal:string="0.00";
     public  desCliente!:string;
     public  cantidad!:string;
 
