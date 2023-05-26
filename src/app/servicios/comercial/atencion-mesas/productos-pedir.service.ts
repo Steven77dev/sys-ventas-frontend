@@ -10,23 +10,17 @@ import { BuscarProductosPorPedirRequest } from 'src/app/models/comercial/atencio
 @Injectable({
   providedIn: 'root'
 })
-export class AtencionMesasService {
-  private apiUrl = '/listadoMesasLocal';
+export class ProductosPedirService {
+  private apiUrl = '/productosPorPedir';
   readonly _URL: string;
 
   constructor(private http: HttpClient) {
     this._URL = environment.apiRest.host + "/comercial";
   }
  
-
-  listadoMesasLocal(request: BuscarMesasRequest): Observable<RootListarMesasLocalResponse> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<RootListarMesasLocalResponse>(this._URL + this.apiUrl, request, { headers });
-  }
-
   listadoProductosPorPedir(request: BuscarProductosPorPedirRequest): Observable<RootListarProductosPorPedirResponse> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<RootListarProductosPorPedirResponse>(this._URL + "/productosPorPedir", request, { headers });
+    return this.http.post<RootListarProductosPorPedirResponse>(this._URL +this.apiUrl, request, { headers });
   }
 
 }

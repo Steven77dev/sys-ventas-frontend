@@ -3,10 +3,7 @@
     
     <div class="p-fluid p-formgrid grid">
         <div class="field col-12">
-             
             <p-dataView #dv [value]="mesas" [paginator]="true" [rows]="18" layout="grid">
-                
-                
                 <ng-template let-mesa pTemplate="gridItem" >
                     <div class="sm:col-10 md:col-2" (click)="seleccionarMesa(mesa)">
                         <div class="mesa-grid-item card {{mesa.desEstadoRegistro=='DISPONIBLE' ? 'mesa-disponible' : 'mesa-nodisponible'}}" >
@@ -19,7 +16,7 @@
                             </div>        
                             <div class="mesa-grid-item-content">
                                 <div class="mesa-estado">{{mesa.desEstadoRegistro}}</div>
-                                <div class="mesa-cliente">{{mesa.desCliente==undefined ? ' - ' : mesa.desCliente}}</div>
+                                <div class="mesa-cliente">{{mesa.desCliente==undefined || mesa.desCliente==='' ? ' - ' : mesa.desCliente}}</div>
                                 
                             </div>
                             <div class="mesa-grid-item-bottom">
@@ -34,56 +31,103 @@
     </div>
 </div>
 
-<p-dialog 
-[(visible)]="mostrarModalPedido" [modal]="true"
-[draggable]="false" [resizable]="false"  [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '80vw'}">
+<p-dialog [(visible)]="mostrarModalPedido" [modal]="true" [draggable]="false" [resizable]="false"  
+[breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '80vw'}">
     <ng-template pTemplate="header">
-        <span class="p-dialog-title">
-            Mesa {{mesaSeleccionada?.desMesa}}
-        </span>
+        <span class="p-dialog-title">Mesa {{mesaSeleccionada?.desMesa}} </span>
     </ng-template>
-    <div class="p-fluid p-formgrid grid">
-        <div class="field col-8">
-            <p-table [value]="pedidosMesa" responsiveLayout="scroll">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>N°</th>
-                        <th>Producto</th>
-                        <th>Cant.</th>
-                        <th>P.U.</th>
-                        <th>Subtotal</th>
-                        <th>Acción</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-pedido>
-                    <tr>
-                        <td>{{pedido.nro}}</td>
-                        <td>{{pedido.desProducto}}</td>
-                        <td>{{pedido.cantidad}}</td>
-                        <td>{{pedido.precio | number: '1.2-2'}}</td>
-                        <td>{{pedido.subTotal | number: '1.2-2'}}</td>
-                        <td> - </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
-        <div class="field col-4">
-            <div class="colCantidad">
-                <p-inputNumber inputId="integeronly" [min]="1" [(ngModel)]="cantidadPedido"  class="p-inputtext-lg inputCantidad" placeholder="Ingrese cantidad"></p-inputNumber>
-                    <button pButton pRipple  icon="pi pi-plus" class="p-button-success p-button-lg btnAgregar"></button>
-                    <button pButton pRipple   icon="pi pi-eraser" class="p-button-secondary p-button-lg btnLimpiar"></button> 
-
+    <div class="grid">
+            <div class="field sm:col-12 md:col-5">
+                <p-table responsiveLayout="scroll" [value]="productosPorPedir" #dt1  dataKey="id"
+                [rows]="10" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [loading]="loading" styleClass="p-datatable-gridlines"
+                [paginator]="true" 
+                [globalFilterFields]="['desProducto','desFamilia']">
+                <!--currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos"-->
+                    <ng-template pTemplate="caption">
+                        <div class="flex">
+                            <button pButton label="Limpiar" class="p-button-outlined" icon="pi pi-filter-slash" (click)="limpiarFiltrado(dt1)"></button>
+                            <span class="p-input-icon-left ml-auto">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="filtrarTabla($event)" placeholder="Buscar producto" />
+                            </span>
+                        </div>
+                    </ng-template>
+                  
+                   <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th>Producto </th>
+                            <th>Precio</th>
+                            <th>Familia</th> 
+                        </tr>
+                    </ng-template> 
+                    <ng-template pTemplate="body" let-product let-columns="columns">
+                        <tr>
+                            <td>{{product.desProducto}}</td>
+                            <td>{{product.precioFormateado}}</td>
+                            <td>{{product.desFamilia}}</td>
+                            
+                           <!-- <td><span [class]="'product-badge status-' + (product.inventoryStatus ? product.inventoryStatus.toLowerCase() : '')">{{product.inventoryStatus}}</span></td>-->
+                           
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="7">No existen productos.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
             </div>
-            <span class="p-buttonset">
-            <button *ngFor="let button of buttonGroups[0]" class="p-button-outlined p-button-lg p-button-secondary" pButton pRipple label="{{ button }}" (click)="seleccionarNumero(button)"></button>
-            </span>
-            
-            
-            <span class="p-buttonset">
-            <button *ngFor="let button of buttonGroups[1]" class="p-button-outlined p-button-lg p-button-secondary" pButton pRipple label="{{ button }}" (click)="seleccionarNumero(button)"></button>
-            </span>
-                
-          
-        </div>    
+            <div class="field sm:col-12 md:col-7">
+                <span class="p-buttonset">
+                    <button *ngFor="let button of accionesPedido" (click)="accionPedidoMesa(button)" class="p-button-outlined p-button-sm {{button.classBtn}}" pButton pRipple label="{{ button.texto }}">
+                        <i style="margin-right: 5px !important;" [class]="button.icon"></i> {{   button.text }}
+                    </button>
+                </span>  
+                <br /><br />
+                <p-table [value]="pedidosMesa" responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>N°</th>
+                            <th>Producto</th>
+                            <th>Cant.</th>
+                            <th>P.U.</th>
+                            <th>Subtotal</th>
+                            <th>Acción</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-pedido>
+                        <tr>
+                            <td>{{pedido.nro}}</td>
+                            <td>{{pedido.desProducto}}</td>
+                            <td>{{pedido.cantidad}}</td>
+                            <td>{{pedido.precio | number: '1.2-2'}}</td>
+                            <td>{{pedido.subTotal | number: '1.2-2'}}</td>
+                            <td> - </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <!--<div class="colCantidad">
+                    <p-inputNumber inputId="integeronly" [min]="1" [(ngModel)]="cantidadPedido"  class="p-inputtext-lg inputCantidad" placeholder="Ingrese cantidad"></p-inputNumber>
+                        <button pButton pRipple  icon="pi pi-plus" class="p-button-success p-button-lg btnAgregar"></button>
+                        <button pButton pRipple   icon="pi pi-eraser" class="p-button-secondary p-button-lg btnLimpiar"></button> 
+                </div>
+                <span class="p-buttonset">
+                    <button *ngFor="let button of buttonGroups[0]" class="p-button-outlined p-button-lg p-button-secondary" pButton pRipple label="{{ button }}" (click)="seleccionarNumero(button)"></button>
+                </span>  
+                <span class="p-buttonset">
+                    <button *ngFor="let button of buttonGroups[1]" class="p-button-outlined p-button-lg p-button-secondary" pButton pRipple label="{{ button }}" (click)="seleccionarNumero(button)"></button>
+                </span>-->   
+            </div>    
+    </div>
+</p-dialog>
+
+
+<p-dialog [(visible)]="mostrarModalAgregarCliente" [modal]="true" [draggable]="false" [resizable]="false"  
+[breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
+    <ng-template pTemplate="header">
+        <span class="p-dialog-title">Cliente {{mesaSeleccionada?.desCliente}} </span>
+    </ng-template>
+    <div class="grid">
+
     </div>
 </p-dialog>

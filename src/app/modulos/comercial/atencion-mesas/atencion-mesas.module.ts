@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {DataViewModule} from 'primeng/dataview';
 import { DropdownModule } from 'primeng/dropdown'; 
@@ -11,6 +11,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {DialogModule} from 'primeng/dialog';
 import {TableModule} from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { SelectButtonModule } from 'primeng/selectbutton';
 @NgModule({
   declarations: [
     AtencionMesasComponent
@@ -26,8 +27,11 @@ import { InputNumberModule } from 'primeng/inputnumber';
     TooltipModule,
     DialogModule,
     TableModule,
-    InputNumberModule
-    // Importa los módulos de PrimeNG que necesites
-  ]
+    InputNumberModule,
+    SelectButtonModule,
+    
+    
+  ],
+  providers: [DatePipe]
 })
 export class AtencionMesasModule { }

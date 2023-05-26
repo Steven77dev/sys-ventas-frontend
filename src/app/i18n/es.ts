@@ -1,0 +1,33 @@
+export const esTranslation = {
+    startsWith: 'Empieza con',
+    contains: 'Contiene',
+    notContains: 'No contiene',
+    endsWith: 'Termina con',
+    equals: 'Igual',
+    notEquals: 'No igual',
+    noFilter: 'Sin filtro',
+    lt: 'Menor que',
+    lte: 'Menor o igual que',
+    gt: 'Mayor que',
+    gte: 'Mayor o igual que',
+    is: 'Es',
+    not: 'No',
+    on: 'En',
+    notOn: 'No en',
+    before: 'Antes',
+    after: 'Después',
+    clear: 'Limpiar',
+    apply: 'Aplicar',
+    matchAll: 'Coincide con todos',
+    matchAny: 'Coincide con cualquier',
+    addRule: 'Agregar regla',
+    removeRule: 'Eliminar regla',
+    paginator: {
+        first: 'Primero',
+        last: 'Último',
+        previous: 'Anterior',
+        next: 'Siguiente',
+        rowsPerPage: 'Registros por página',
+        of: 'de'
+      }
+  };

@@ -25,11 +25,10 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,  
     private mensajeToast: MensajesToastService,
-    private iniciarSesion: InicioSesionService,
-    private primengConfig: PrimeNGConfig) {}
+    private iniciarSesion: InicioSesionService) {}
 
   ngOnInit() { 
-    this.primengConfig.ripple = true;
+     
     
       // Verificar si hay información de inicio de sesión almacenada en localStorage
       const token = localStorage.getItem('token');
