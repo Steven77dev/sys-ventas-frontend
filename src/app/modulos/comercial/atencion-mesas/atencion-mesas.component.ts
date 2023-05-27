@@ -8,12 +8,8 @@ import { BuscarProductosPorPedirRequest } from 'src/app/models/comercial/atencio
 import { CrearPedidoRequest } from 'src/app/models/comercial/atencion-mesas/crear-pedido-request.model';
 import { MesasLocalResponse, RootListarMesasLocalResponse } from 'src/app/models/comercial/atencion-mesas/listar-mesas-response.model';
 import { PedidosMesaResponse, RootListarPedidosMesaResponse } from 'src/app/models/comercial/atencion-mesas/listar-pedidos-mesa.model';
-import { ProductosPorPedirResponse, RootListarProductosPorPedirResponse } from 'src/app/models/comercial/atencion-mesas/listar-productos-pedir.model';
-import { AgregarProductoPedidoService } from 'src/app/servicios/comercial/atencion-mesas/agregar-producto-pedido.service';
-import { AtencionMesasService } from 'src/app/servicios/comercial/atencion-mesas/atencion-mesas.service';
-import { CrearPedidoService } from 'src/app/servicios/comercial/atencion-mesas/crear-pedido.service';
-import { PedidosPorMesaService } from 'src/app/servicios/comercial/atencion-mesas/pedidos-por-mesa.service';
-import { ProductosPedirService } from 'src/app/servicios/comercial/atencion-mesas/productos-pedir.service';
+import { ProductosPorPedirResponse, RootListarProductosPorPedirResponse } from 'src/app/models/comercial/atencion-mesas/listar-productos-pedir.model'; 
+import { AtencionMesasService } from 'src/app/servicios/comercial/atencion-mesas/atencion-mesas.service'; 
 import { FechaConversionService } from 'src/app/servicios/compartido/fecha.service';
 @Component({
   templateUrl: './atencion-mesas.component.html',
@@ -49,9 +45,9 @@ export class AtencionMesasComponent implements OnInit {
   ];
 
 
-  constructor(public atencionMesasService: AtencionMesasService, public pedidosMesaService: PedidosPorMesaService,
-    public dateService: FechaConversionService, public productosPorPedirService: ProductosPedirService,
-    public agregarProductoPedidoService: AgregarProductoPedidoService, public crearPedidoService: CrearPedidoService
+  constructor(
+    public atencionMesasService: AtencionMesasService, 
+    public dateService: FechaConversionService 
 
   ) {
     this.entidadSesion = localStorage.getItem("entidad") || '0';
@@ -103,7 +99,7 @@ export class AtencionMesasComponent implements OnInit {
 
   listarProductosPorPedir() {
     let request = new BuscarProductosPorPedirRequest(this.almacenSesion, parseInt(this.entidadSesion), this.localSesion, "%");
-    this.productosPorPedirService.listadoProductosPorPedir(request).subscribe({
+    this.atencionMesasService.listadoProductosPorPedir(request).subscribe({
       next: (data: RootListarProductosPorPedirResponse) => {
         if (data.codigo == 0) {
           this.productosPorPedir = data.respuesta;
@@ -141,7 +137,7 @@ export class AtencionMesasComponent implements OnInit {
     request.seriePedido = seriePedido;
     request.nroPedido = nroPedido;
 
-    this.pedidosMesaService.listadoPedidosPorMesa(request).subscribe({
+    this.atencionMesasService.listadoPedidosPorMesa(request).subscribe({
       next: (data: RootListarPedidosMesaResponse) => {
         if (data.codigo == 0) {
           this.pedidosMesa = data.respuesta;
@@ -190,8 +186,8 @@ export class AtencionMesasComponent implements OnInit {
 
   crearPedido() {
     let asignarMesaPedidoRequest = new AsignarMesaPedidoRequest("", "", parseInt(this.entidadSesion), parseInt(this.localSesion), this.mesaSeleccionada.codMesa, 1, localStorage.getItem("token")?.toString() || '');
-    let request = new CrearPedidoRequest("", this.codPersonalSesion, this.fechaFormateada, 0, "", 0, this.localSesion, this.ptoAtencionSesion, 1, localStorage.getItem("token")?.toString() || '', asignarMesaPedidoRequest);
-    this.crearPedidoService.crearPedido(request).subscribe({
+    let request = new CrearPedidoRequest("", this.codPersonalSesion, this.fechaFormateada, 0, "", 0, this.localSesion, this.ptoAtencionSesion, 76, localStorage.getItem("token")?.toString() || '', asignarMesaPedidoRequest);
+    this.atencionMesasService.crearPedido(request).subscribe({
       next: (data: any) => {
         if (data.codigo == 0) {
           this.mesaSeleccionada.nroPedido = data.respuesta.nroPedido;
@@ -212,7 +208,7 @@ export class AtencionMesasComponent implements OnInit {
   actualizarProductosPedido() {
     let request = new AgregarProductoPedidoRequest(this.mesaSeleccionada.seriePedido, this.mesaSeleccionada.nroPedido,
       this.entidadSesion, this.selectedProducto.producto, this.selectedProducto.precio, parseInt(this.cantidadPedido), this.selectedProducto.precio * parseInt(this.cantidadPedido), 1, localStorage.getItem("token") || '');
-    this.agregarProductoPedidoService.agregarProductoPedido(request).subscribe({
+    this.atencionMesasService.agregarProductoPedido(request).subscribe({
       next: (data: any) => {
         if (data.codigo == 0) {
           this.listarPedidosPorMesa(this.mesaSeleccionada.seriePedido, this.mesaSeleccionada.nroPedido);
