@@ -1,14 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
 import { AgregarProductoPedidoRequest } from 'src/app/models/comercial/atencion-mesas/agregar-producto-pedido-request.model';
+import { AsignarMesaPedidoRequest } from 'src/app/models/comercial/atencion-mesas/asignar-mesa-pedido-request.model';
 import { BuscarMesasRequest } from 'src/app/models/comercial/atencion-mesas/buscar-mesas-request.model';
 import { BuscarPedidosMesaRequest } from 'src/app/models/comercial/atencion-mesas/buscar-pedidos-mesa-request.model';
 import { BuscarProductosPorPedirRequest } from 'src/app/models/comercial/atencion-mesas/buscar-productos-pedir-request.model';
+import { CrearPedidoRequest } from 'src/app/models/comercial/atencion-mesas/crear-pedido-request.model';
 import { MesasLocalResponse, RootListarMesasLocalResponse } from 'src/app/models/comercial/atencion-mesas/listar-mesas-response.model';
 import { PedidosMesaResponse, RootListarPedidosMesaResponse } from 'src/app/models/comercial/atencion-mesas/listar-pedidos-mesa.model';
 import { ProductosPorPedirResponse, RootListarProductosPorPedirResponse } from 'src/app/models/comercial/atencion-mesas/listar-productos-pedir.model';
 import { AgregarProductoPedidoService } from 'src/app/servicios/comercial/atencion-mesas/agregar-producto-pedido.service';
 import { AtencionMesasService } from 'src/app/servicios/comercial/atencion-mesas/atencion-mesas.service';
+import { CrearPedidoService } from 'src/app/servicios/comercial/atencion-mesas/crear-pedido.service';
 import { PedidosPorMesaService } from 'src/app/servicios/comercial/atencion-mesas/pedidos-por-mesa.service';
 import { ProductosPedirService } from 'src/app/servicios/comercial/atencion-mesas/productos-pedir.service';
 import { FechaConversionService } from 'src/app/servicios/compartido/fecha.service';
@@ -33,9 +36,11 @@ export class AtencionMesasComponent implements OnInit {
   accionPedido!: any;
   cantidadPedido: string = '';
   loading: boolean = true;
-  entidadSesion!: string;
-  localSesion!: string;
-  almacenSesion!: string;
+  entidadSesion!: any;
+  localSesion!: any;
+  almacenSesion!: any;
+  codPersonalSesion!: string;
+  ptoAtencionSesion!: any;
   @ViewChild('dt1') dt1!: Table;
   selectedProducto!: ProductosPorPedirResponse;
   buttonGroups: number[][] = [
@@ -46,12 +51,14 @@ export class AtencionMesasComponent implements OnInit {
 
   constructor(public atencionMesasService: AtencionMesasService, public pedidosMesaService: PedidosPorMesaService,
     public dateService: FechaConversionService, public productosPorPedirService: ProductosPedirService,
-    public agregarProductoPedidoService: AgregarProductoPedidoService
+    public agregarProductoPedidoService: AgregarProductoPedidoService, public crearPedidoService: CrearPedidoService
 
   ) {
     this.entidadSesion = localStorage.getItem("entidad") || '0';
     this.localSesion = localStorage.getItem("local") || '0';
     this.almacenSesion = localStorage.getItem("almacen") || '0';
+    this.codPersonalSesion = localStorage.getItem("codPersonal") || '';
+    this.ptoAtencionSesion = localStorage.getItem("ptoAtencion") || '';
     this.fechaActual = new Date();
     this.fechaFormateada = this.dateService.formatearFechaDDYYMMM(this.fechaActual);
     this.listarProductosPorPedir();
@@ -169,7 +176,40 @@ export class AtencionMesasComponent implements OnInit {
     if (this.cantidadPedido == '') {
       alert("no puede agregar.");
     }
-    console.log(this.selectedProducto.producto);
+    if (this.mesaSeleccionada.nroPedido != null || this.mesaSeleccionada.seriePedido != null) {
+      this.actualizarProductosPedido();
+    }
+    else {
+      this.crearPedido();
+    }
+
+
+
+
+  }
+
+  crearPedido() {
+    let asignarMesaPedidoRequest = new AsignarMesaPedidoRequest("", "", parseInt(this.entidadSesion), parseInt(this.localSesion), this.mesaSeleccionada.codMesa, 1, localStorage.getItem("token")?.toString() || '');
+    let request = new CrearPedidoRequest("", this.codPersonalSesion, this.fechaFormateada, 0, "", 0, this.localSesion, this.ptoAtencionSesion, 1, localStorage.getItem("token")?.toString() || '', asignarMesaPedidoRequest);
+    this.crearPedidoService.crearPedido(request).subscribe({
+      next: (data: any) => {
+        if (data.codigo == 0) {
+          this.mesaSeleccionada.nroPedido = data.respuesta.nroPedido;
+          this.mesaSeleccionada.seriePedido = data.respuesta.seriePedido;
+          this.actualizarProductosPedido();
+          //this.listarPedidosPorMesa(this.mesaSeleccionada.seriePedido, this.mesaSeleccionada.nroPedido);
+        }
+      },
+      error: (errorResponse: any) => {
+        this.mesas = [];
+      },
+      complete: () => {
+        this.selectedProducto = new ProductosPorPedirResponse();
+      },
+    });
+  }
+
+  actualizarProductosPedido() {
     let request = new AgregarProductoPedidoRequest(this.mesaSeleccionada.seriePedido, this.mesaSeleccionada.nroPedido,
       this.entidadSesion, this.selectedProducto.producto, this.selectedProducto.precio, parseInt(this.cantidadPedido), this.selectedProducto.precio * parseInt(this.cantidadPedido), 1, localStorage.getItem("token") || '');
     this.agregarProductoPedidoService.agregarProductoPedido(request).subscribe({
@@ -183,10 +223,9 @@ export class AtencionMesasComponent implements OnInit {
       },
       complete: () => {
         this.selectedProducto = new ProductosPorPedirResponse();
+        this.cantidadPedido = '0';
       },
     });
-    this.cantidadPedido = '0';
-
   }
 
   limpiarCalculadora() {
