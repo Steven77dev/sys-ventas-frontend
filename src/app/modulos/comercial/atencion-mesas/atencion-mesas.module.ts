@@ -12,6 +12,7 @@ import {DialogModule} from 'primeng/dialog';
 import {TableModule} from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
 @NgModule({
   declarations: [
     AtencionMesasComponent
@@ -29,7 +30,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     TableModule,
     InputNumberModule,
     SelectButtonModule,
-    
+    OverlayPanelModule
     
   ],
   providers: [DatePipe]

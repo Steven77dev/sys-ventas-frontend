@@ -6,6 +6,8 @@ import { PrimeNGConfig } from 'primeng/api';
 import { IniciarSesionRequest } from '../models/usuarios/login/iniciar-sesion-request.model';
 import { InicioSesionService } from '../servicios/usuarios/login/iniciar-sesion.service'; 
 import { RootObjectSesionResponse } from '../models/usuarios/login/sesion-response.model';
+import { PersonalUsuarioService } from '../servicios/usuarios/login/personal-usuario.service';
+import { PersonalUsuarioResponse, RootObjectPersonalUsuarioResponse } from '../models/usuarios/login/personal-usuario-response.model';
 
 @Component({
   selector: 'app-login',
@@ -21,11 +23,13 @@ export class LoginComponent implements OnInit {
   error: string="";
   submitted=false;
   cargando: boolean = false;
+  personalUsuario!: RootObjectPersonalUsuarioResponse;
   constructor(
     private router: Router,
     private fb: FormBuilder,  
     private mensajeToast: MensajesToastService,
-    private iniciarSesion: InicioSesionService) {}
+    private iniciarSesion: InicioSesionService,
+    private personalUsuarioService: PersonalUsuarioService) {}
 
   ngOnInit() { 
      
@@ -47,15 +51,33 @@ export class LoginComponent implements OnInit {
 
     const email = this.loginForm.value.email;
     const password = this.loginForm.value.password;
-
     const request: IniciarSesionRequest = new IniciarSesionRequest(email, password);
-
     this.iniciarSesion.iniciarSesion(request).subscribe({
       next: (data: RootObjectSesionResponse) => {
         this.cargando = true;
         if(data.codigo==0 && (data.respuesta.estado==8 || data.respuesta.estado==1)){
           this.mensajeToast.showSuccess('Bienvenido', data.respuesta.descripcion);
           localStorage.setItem("token", data.respuesta.sesion);
+          this.personalUsuarioService.obtenerPersonalUsuario(email).subscribe({
+            next: (data: RootObjectPersonalUsuarioResponse) => {
+              localStorage.setItem("codPersonal", data.respuesta.personal);
+              localStorage.setItem("nombres", data.respuesta.nombres);
+              localStorage.setItem("entidad", data.respuesta.entidad);
+              localStorage.setItem("almacen", data.respuesta.almacen);
+              localStorage.setItem("ptoAtencion", data.respuesta.puntoAtencion);
+              localStorage.setItem("local", data.respuesta.local);
+              localStorage.setItem("nombreLocal", data.respuesta.nombreLocal);
+              localStorage.setItem("codPersona", data.respuesta.persona);
+            },
+            error: (errorResponse: any) => {
+              this.error = errorResponse;
+            },
+            complete: () => {      
+                this.cargando = false;
+             
+              
+            },
+           });
           setTimeout(() => {
             this.router.navigate(['/dashboard']);
           }, 2000);

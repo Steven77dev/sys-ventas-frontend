@@ -75,7 +75,7 @@
     border-bottom-left-radius: 0;
 }
 
-.inputCantidad input {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+.inputCalculadora {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
 }

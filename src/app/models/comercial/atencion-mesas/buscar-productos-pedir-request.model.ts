@@ -4,7 +4,11 @@ export class BuscarProductosPorPedirRequest{
     public local!: string;
     public familia!: string;
 
-    constructor(){
+    constructor(almacen:string, entidad:number, local:string, familia:string){
+        this.almacen = almacen;
+        this.entidad = entidad;
+        this.local = local;
+        this.familia = familia;
 
     }
     
