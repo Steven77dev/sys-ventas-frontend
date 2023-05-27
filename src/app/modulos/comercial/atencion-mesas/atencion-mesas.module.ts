@@ -13,13 +13,18 @@ import {TableModule} from 'primeng/table';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ToastModule } from 'primeng/toast';
+import { LoadingModule } from 'src/app/compartido/loading.module';
 @NgModule({
   declarations: [
-    AtencionMesasComponent
+    AtencionMesasComponent,
+    
   ],
   imports: [
     CommonModule, 
     FormsModule,
+    ProgressSpinnerModule,
     DropdownModule,
     InputTextModule,
     CalendarModule,
@@ -30,7 +35,9 @@ import {OverlayPanelModule} from 'primeng/overlaypanel';
     TableModule,
     InputNumberModule,
     SelectButtonModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    ToastModule,
+    LoadingModule
     
   ],
   providers: [DatePipe]

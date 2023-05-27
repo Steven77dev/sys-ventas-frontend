@@ -40,7 +40,7 @@
             <div class="field sm:col-12 md:col-5">
                 <p-table responsiveLayout="scroll" [value]="productosPorPedir" #dt1  dataKey="producto" 
                 selectionMode="single" [(selection)]="selectedProducto"  responsiveLayout="scroll" (onRowSelect)="seleccionarProducto($event)"
-                [rows]="10" [showCurrentPageReport]="true" [loading]="loading" styleClass="p-datatable-gridlines"
+                [rows]="10" [showCurrentPageReport]="true" styleClass="p-datatable-gridlines"
                 [paginator]="true"  [globalFilterFields]="['desProducto','desFamilia']">
                 <!--currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos"-->
                     <ng-template pTemplate="caption">
@@ -152,3 +152,5 @@
 
     </div>
 </p-dialog>
+<p-toast position="top-right"></p-toast>
+<app-loading [show]="loading"></app-loading>

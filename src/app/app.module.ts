@@ -18,11 +18,11 @@ import localeEs from '@angular/common/locales/es';
 import { PrimeNGConfig } from 'primeng/api';
 registerLocaleData(localeEs);
 import { esTranslation } from './i18n/es';
+import { LoadingModule } from './compartido/loading.module';
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent, 
-    LoadingComponent,
+    LoginComponent,  
     NotfoundComponent
   ],
   imports: [
@@ -35,6 +35,7 @@ import { esTranslation } from './i18n/es';
     FormsModule,
     ReactiveFormsModule,
     AppLayoutModule,
+    LoadingModule
     
   ],
   providers: [{ provide:  LocationStrategy, useClass: HashLocationStrategy},MessageService, {provide: LOCALE_ID, useValue: 'es'}],
@@ -43,7 +44,7 @@ import { esTranslation } from './i18n/es';
 export class AppModule { 
   constructor(private primengConfig: PrimeNGConfig) {
     primengConfig.setTranslation(esTranslation);
-    primengConfig.ripple = true;
+    this.primengConfig.ripple = true;
    
   }
 }
