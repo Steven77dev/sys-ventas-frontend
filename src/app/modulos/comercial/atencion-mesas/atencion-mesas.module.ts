@@ -16,6 +16,8 @@ import {OverlayPanelModule} from 'primeng/overlaypanel';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { LoadingModule } from 'src/app/compartido/loading.module';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ConfirmationService} from 'primeng/api';
 @NgModule({
   declarations: [
     AtencionMesasComponent,
@@ -37,9 +39,10 @@ import { LoadingModule } from 'src/app/compartido/loading.module';
     SelectButtonModule,
     OverlayPanelModule,
     ToastModule,
-    LoadingModule
+    LoadingModule,
+    ConfirmDialogModule
     
   ],
-  providers: [DatePipe]
+  providers: [DatePipe, ConfirmationService]
 })
 export class AtencionMesasModule { }

@@ -1,12 +1,12 @@
 export class SesionResponse{
     public estado!: number;
     public descripcion!: string;
-    public sesion!:string;
+    //public sesion!:string;
 
-    constructor(estado:number, descripcion:string, sesion:string){
+    constructor(estado:number, descripcion:string/*, sesion:string*/){
         this.estado=estado;
         this.descripcion=descripcion;
-        this.sesion=sesion;
+        //this.sesion=sesion;
     }
 
 }

@@ -53,11 +53,11 @@ export class LoginComponent implements OnInit {
     const password = this.loginForm.value.password;
     const request: IniciarSesionRequest = new IniciarSesionRequest(email, password);
     this.iniciarSesion.iniciarSesion(request).subscribe({
-      next: (data: RootObjectSesionResponse) => {
+      next: (iniciarSesionResponse: RootObjectSesionResponse) => {
         this.cargando = true;
-        if(data.codigo==0 && (data.respuesta.estado==8 || data.respuesta.estado==1)){
-          this.mensajeToast.showSuccess('Bienvenido', data.respuesta.descripcion);
-          localStorage.setItem("token", data.respuesta.sesion);
+        if(iniciarSesionResponse.codigo==0 && (iniciarSesionResponse.respuesta.estado==8 || iniciarSesionResponse.respuesta.estado==1)){
+          
+          //localStorage.setItem("token", data.respuesta.sesion);
           this.personalUsuarioService.obtenerPersonalUsuario(email).subscribe({
             next: (data: RootObjectPersonalUsuarioResponse) => {
               localStorage.setItem("codPersonal", data.respuesta.personal);
@@ -68,9 +68,13 @@ export class LoginComponent implements OnInit {
               localStorage.setItem("local", data.respuesta.local);
               localStorage.setItem("nombreLocal", data.respuesta.nombreLocal);
               localStorage.setItem("codPersona", data.respuesta.persona);
+              setTimeout(() => {
+                this.router.navigate(['/dashboard']);
+              }, 2000);
+              this.mensajeToast.showSuccess('Bienvenido', iniciarSesionResponse.respuesta.descripcion);
             },
-            error: (errorResponse: any) => {
-              this.error = errorResponse;
+            error: (errorResponse: any) => { 
+              this.mensajeToast.showError('Error', 'Se presentó un error al obtener datos del personal');
             },
             complete: () => {      
                 this.cargando = false;
@@ -78,12 +82,10 @@ export class LoginComponent implements OnInit {
               
             },
            });
-          setTimeout(() => {
-            this.router.navigate(['/dashboard']);
-          }, 2000);
+          
           
         } else{
-          this.mensajeToast.showError('Error', data.respuesta.descripcion);
+          this.mensajeToast.showError('Error', iniciarSesionResponse.respuesta.descripcion);
           
         }
       },
