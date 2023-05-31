@@ -22,6 +22,6 @@ export class AppTopBarComponent {
 
     cerrarSesion() {
         localStorage.clear();;
-        this.router.navigate(["/"]);
+        this.router.navigate(["/login"]);
     }
 }

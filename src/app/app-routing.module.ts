@@ -8,7 +8,7 @@ import { NotfoundComponent } from './modulos/notfound/notfound.component';
 @NgModule({
   imports: [
       RouterModule.forRoot([
-        { path: '', component: LoginComponent },
+        { path: 'login', component: LoginComponent },
         {
           path: '', component: AppLayoutComponent,
           children: [

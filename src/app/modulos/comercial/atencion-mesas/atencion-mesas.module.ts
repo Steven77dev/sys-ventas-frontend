@@ -18,6 +18,8 @@ import { ToastModule } from 'primeng/toast';
 import { LoadingModule } from 'src/app/compartido/loading.module';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ConfirmationService} from 'primeng/api';
+import {AccordionModule} from 'primeng/accordion';
+import {InputTextareaModule} from 'primeng/inputtextarea';
 @NgModule({
   declarations: [
     AtencionMesasComponent,
@@ -40,7 +42,9 @@ import {ConfirmationService} from 'primeng/api';
     OverlayPanelModule,
     ToastModule,
     LoadingModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    AccordionModule,
+    InputTextareaModule
     
   ],
   providers: [DatePipe, ConfirmationService]

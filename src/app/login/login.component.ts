@@ -60,14 +60,14 @@ export class LoginComponent implements OnInit {
           //localStorage.setItem("token", data.respuesta.sesion);
           this.personalUsuarioService.obtenerPersonalUsuario(email).subscribe({
             next: (data: RootObjectPersonalUsuarioResponse) => {
-              localStorage.setItem("codPersonal", data.respuesta.personal);
+              //localStorage.setItem("codPersonal", data.respuesta.personal);
               localStorage.setItem("nombres", data.respuesta.nombres);
-              localStorage.setItem("entidad", data.respuesta.entidad);
-              localStorage.setItem("almacen", data.respuesta.almacen);
-              localStorage.setItem("ptoAtencion", data.respuesta.puntoAtencion);
-              localStorage.setItem("local", data.respuesta.local);
+              //localStorage.setItem("entidad", data.respuesta.entidad);
+              //localStorage.setItem("almacen", data.respuesta.almacen);
+              //localStorage.setItem("ptoAtencion", data.respuesta.puntoAtencion);
+              //localStorage.setItem("local", data.respuesta.local);
               localStorage.setItem("nombreLocal", data.respuesta.nombreLocal);
-              localStorage.setItem("codPersona", data.respuesta.persona);
+              //localStorage.setItem("codPersona", data.respuesta.persona);
               setTimeout(() => {
                 this.router.navigate(['/dashboard']);
               }, 2000);
@@ -78,15 +78,10 @@ export class LoginComponent implements OnInit {
             },
             complete: () => {      
                 this.cargando = false;
-             
-              
             },
            });
-          
-          
         } else{
           this.mensajeToast.showError('Error', iniciarSesionResponse.respuesta.descripcion);
-          
         }
       },
       error: (errorResponse: any) => {
@@ -94,8 +89,6 @@ export class LoginComponent implements OnInit {
       },
       complete: () => {      
           this.cargando = false;
-       
-        
       },
      });
   }

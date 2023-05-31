@@ -1,11 +1,20 @@
-<div class="card">
-    <h5>Atención de mesas</h5>
-    <div class="p-fluid p-formgrid grid">
-        <div class="field col-12">
+<div class="card {{!verificarApertura ? 'full-width-screen' :'' }}" >
+   
+    <div  *ngIf="!verificarApertura">
+        <div class="grid flex flex-column align-items-center">
+            <div class="flex justify-content-center align-items-center bg-orange-500 border-circle"
+                style="width: 3.2rem; height: 3.2rem;"><i class="text-50 pi pi-fw pi-lock text-2xl"></i></div>
+            <h1 class="text-900 font-bold text-4xl lg:text-5xl mb-2">Acceso denegado</h1><span class="text-600 mb-5">
+                No puede ingresar mientras no haya aperturado caja.</span>
+        </div>
+    </div>
+    <div class="p-fluid p-formgrid grid" *ngIf="verificarApertura">
+        <h5>Atención de mesas</h5>
+        <div >
             <p-dataView #dv [value]="mesas" [paginator]="true" [rows]="18" layout="grid"
                 emptyMessage="No existen mesas">
                 <ng-template let-mesa pTemplate="gridItem">
-                    <div class="sm:col-10 md:col-2">
+                    <div class="sm:col-6 md:col-3 lg:col-2 col-12">
                         <div class="mesa-grid-item card {{mesa.desEstadoRegistro=='DISPONIBLE' ? 'mesa-disponible' : 'mesa-nodisponible'}}"
                             (click)="seleccionarMesa(mesa)">
                             <div class="mesa-grid-item-top">
@@ -35,15 +44,18 @@
 
             </p-dataView>
         </div>
+
     </div>
 
-    <p-dialog [(visible)]="mostrarModalPedido" [modal]="true" [draggable]="false" [resizable]="false"  [closeOnEscape]="false"
-        [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '80vw'}">
+
+
+    <p-dialog [(visible)]="mostrarModalPedido" [modal]="true" [draggable]="false" [resizable]="false"
+        [closeOnEscape]="false" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '80vw'}">
         <ng-template pTemplate="header">
             <span class="p-dialog-title">Mesa {{mesaSeleccionada?.desMesa}} </span>
         </ng-template>
         <div class="grid">
-            <div class="field sm:col-12 md:col-5">
+            <div class="field sm:col-12 md:col-12 lg:col-5">
                 <p-table responsiveLayout="scroll" [value]="productosPorPedir" #dt1 dataKey="producto"
                     selectionMode="single" [(selection)]="selectedProducto" responsiveLayout="scroll"
                     (onRowSelect)="seleccionarProducto($event)" [rows]="10" [showCurrentPageReport]="true"
@@ -64,7 +76,7 @@
 
                     <ng-template pTemplate="header" let-columns>
                         <tr>
-                            <th>Productos</th>
+                            <th>Producto</th>
                             <th>Precio</th>
                             <th>Familia</th>
                         </tr>
@@ -83,7 +95,7 @@
                     </ng-template>
                 </p-table>
             </div>
-            <div class="field sm:col-12 md:col-7">
+            <div class="field sm:col-12 md:col-12 lg:col-7">
                 <span class="p-buttonset">
                     <button *ngFor="let button of accionesPedido" (click)="accionPedidoMesa(button)"
                         class="p-button-outlined p-button-sm {{button.classBtn}}" pButton pRipple
@@ -111,6 +123,13 @@
                             <td>{{pedido.precio | number: '1.2-2'}}</td>
                             <td>{{pedido.subTotal | number: '1.2-2'}}</td>
                             <td> - </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <tr  *ngIf="pedidosMesa.length>0">
+                            <td colspan="4" class="text-right">Total</td>
+                            <td>{{montoTotalPagar | currency: 'PEN'}}</td> 
+                            <td colspan="1"></td>
                         </tr>
                     </ng-template>
                 </p-table>
@@ -166,7 +185,7 @@
     </p-dialog>
 
     <p-dialog [(visible)]="mostrarConfirmarAnulacion" [modal]="true" [draggable]="false" [resizable]="false"
-    [style]="{width: '350px'}" >
+        [style]="{width: '350px'}">
         <ng-template pTemplate="header">
             <span class="p-dialog-title">Confirmación</span>
         </ng-template>
@@ -176,28 +195,101 @@
                 Usuario
             </div>
             <div class="field sm:col-12 md:col-5">
-                Contraseña   
+                Contraseña
             </div>
         </div>
     </p-dialog>
 
-    <p-dialog [(visible)]="mostrarCobrarPrincipal" [modal]="true" [draggable]="false" [resizable]="false"  [closeOnEscape]="false"
-    [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '80vw'}" >
+   
+
+    <p-dialog [(visible)]="mostrarCobrarPrincipal" [modal]="true" [draggable]="false" [resizable]="false"
+        [closeOnEscape]="false" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '80vw'}">
         <ng-template pTemplate="header">
-            <span class="p-dialog-title">Pedido {{mesaSeleccionada.nroPedido}} de Mesa {{mesaSeleccionada.desMesa}}</span>
+            <span class="p-dialog-title">Pedido #{{mesaSeleccionada.nroPedido | number}} de Mesa
+                {{mesaSeleccionada.desMesa}}</span>
         </ng-template>
         <br />
         <div class="grid">
-            <div class="field sm:col-12 md:col-5">
-                Usuario
+            <div class="sm:col-12 md:col-12 lg:col-6" >
+                <div class="p-fluid p-formgrid grid">
+                    <!--<div class="field col-12">
+                        <label for="firstname2">Descuento</label>
+                        <p-dropdown name="descuento" [options]="listadoDsctos" [(ngModel)]="dsctoSeleccionado" 
+                        optionLabel="desDscto" optionValue="codDscto"></p-dropdown>
+                    </div>-->
+                    <div class="field col-12">
+                        <label for="firstname2">Métodos de pago</label>
+                        <p-selectButton [options]="metodosPagos" [(ngModel)]="metodoPagoSeleccionado" optionLabel="icon">
+                            <ng-template let-item>
+                                <i [class]="item.icon" style="margin-right: 5px !important;"></i>  {{ item.texto}}
+                            </ng-template>
+                        </p-selectButton>
+                       
+                    </div>
+                   
+                    <div *ngIf="metodoPagoSeleccionado?.id==2"  class="field md:col-6 sm:col-12 col-12">
+                        <label for="tarjeta">Especifique tarjeta</label>
+                        
+                        <p-dropdown name="descuento" [options]="listadoDsctos" [(ngModel)]="dsctoSeleccionado" 
+                        optionLabel="desDscto" optionValue="codDscto"></p-dropdown>   
+                            
+                    </div>
+                    <div *ngIf="metodoPagoSeleccionado?.id==2"  class="field md:col-6 sm:col-12 col-12">
+                        <label for="tarjeta">N° operación</label>
+                        <input type="text" pInputText > 
+                            
+                    </div>
+                    <div  class="field col-12" *ngIf="metodoPagoSeleccionado?.id==1 || metodoPagoSeleccionado?.id==2">
+                        <label for="monto">Importe</label>
+                        <div class="p-inputgroup">
+                            <input type="text" pInputText placeholder="Monto"> 
+                            <span class="p-inputgroup-addon" *ngIf="metodoPagoSeleccionado?.id==1">Vuelto <br />S/ 700.00</span>
+                            <button type="button" pButton pRipple icon="pi pi-plus" styleClass="p-button-succes" label="Agregar pago"></button>       
+                        </div>
+                    </div>
+                     
+                </div>
+               
             </div>
-            <div class="field sm:col-12 md:col-5">
-                Contraseña   
+            <div class="sm-col-12 md:col-12 lg:col-6">
+                <div class="p-fluid p-formgrid grid">
+                    <div class="sm-col-12 md:col-12">
+                        <p-table [value]="listadoPagos" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Método de pago</th>
+                                    <th>Importe</th>
+                                    <th>Nota</th> 
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-pedido>
+                                <tr> 
+                                    <td>{{pedido.metodoPago}}</td>  
+                                    <td>{{pedido.importe | number: '1.2-2'}}</td>
+                                    <td> - </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="3">No hay método de pago.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>    
+                    </div>
+                    <div class="field col-12">
+                        <textarea [autoResize]="false" rows="3" pInputTextarea placeholder="Observación o nota"></textarea>
+                    </div>
+                    <div class="field col-6 ">
+                        <button pButton pRipple  icon="pi pi-check" label="Cobrar" class="p-button-success p-button-lg "></button>
+                    </div>
+                    <div class="field col-6">
+                        <button pButton pRipple  icon="pi pi-list" label="Detallado" class="p-button-success p-button-lg"></button>
+                    </div>
+                    
+                </div>  
             </div>
         </div>
     </p-dialog>
-
-
 
     <p-toast position="top-right"></p-toast>
     <app-loading [show]="loading"></app-loading>

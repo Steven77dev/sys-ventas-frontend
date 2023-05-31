@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConfirmationService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { catchError, filter, finalize, map, of, tap } from 'rxjs';
+import { CajaModel } from 'src/app/models/caja';
 import { AgregarProductoPedidoRequest } from 'src/app/models/comercial/atencion-mesas/agregar-producto-pedido-request.model';
 import { AsignarMesaPedidoRequest } from 'src/app/models/comercial/atencion-mesas/asignar-mesa-pedido-request.model';
 import { BuscarMesasRequest } from 'src/app/models/comercial/atencion-mesas/buscar-mesas-request.model';
@@ -11,9 +12,11 @@ import { CrearPedidoRequest } from 'src/app/models/comercial/atencion-mesas/crea
 import { MesasLocalResponse, RootListarMesasLocalResponse } from 'src/app/models/comercial/atencion-mesas/listar-mesas-response.model';
 import { PedidosMesaResponse, RootListarPedidosMesaResponse } from 'src/app/models/comercial/atencion-mesas/listar-pedidos-mesa.model';
 import { ProductosPorPedirResponse, RootListarProductosPorPedirResponse } from 'src/app/models/comercial/atencion-mesas/listar-productos-pedir.model'; 
+import { BuscarAperturaCajaRequest } from 'src/app/models/finanzas/cuadrecaja/buscar-apertura-caja-request.model';
 import { AtencionMesasService } from 'src/app/servicios/comercial/atencion-mesas/atencion-mesas.service'; 
 import { FechaConversionService } from 'src/app/servicios/compartido/fecha.service';
 import { MensajesToastService } from 'src/app/servicios/compartido/mensajes-toast.service';
+import { IngresoDiarioService } from 'src/app/servicios/finanzas/ingresos/ingreso-diario.service';
 @Component({
   templateUrl: './atencion-mesas.component.html',
   styleUrls: ['./atencion-mesas.component.css'],
@@ -25,24 +28,27 @@ import { MensajesToastService } from 'src/app/servicios/compartido/mensajes-toas
 export class AtencionMesasComponent implements OnInit {
   mesas!: MesasLocalResponse[];
   productosPorPedir!: ProductosPorPedirResponse[];
-  pedidosMesa!: PedidosMesaResponse[];
+  pedidosMesa: PedidosMesaResponse[] = [];
   mesaSeleccionada!: MesasLocalResponse;
   mostrarModalPedido: boolean = false;
   mostrarModalAgregarCliente: boolean = false;
   mostrarConfirmarAnulacion:boolean = false;
   mostrarCobrarPrincipal:boolean = false;
+  mostrarDsctoGlobal:boolean = false;
   fechaActual = new Date();
   fechaFormateada: string = "";
   accionesPedido!: any[];
   accionPedido!: any;
   cantidadPedido: string = '';
   loading: boolean = true;
-  /*
-  entidadSesion!: any;
-  localSesion!: any;
-  almacenSesion!: any;
-  codPersonalSesion!: string;
-  ptoAtencionSesion!: any;*/
+  verificarApertura: boolean =true;
+  listadoDsctos!: CajaModel[];
+  dsctoSeleccionado!: CajaModel;
+
+  metodosPagos!: any[];
+  metodoPagoSeleccionado!: any;
+
+  listadoPagos!: any[];
   @ViewChild('dt1') dt1!: Table;
   selectedProducto!: ProductosPorPedirResponse;
   buttonGroups: number[][] = [
@@ -50,12 +56,14 @@ export class AtencionMesasComponent implements OnInit {
     [6, 7, 8, 9, 0]
   ];
 
-
+  montoTotalPagar:number=0.00;
+  montoFaltante:number=0.00;
   constructor(
     public atencionMesasService: AtencionMesasService, 
     private mensajeToast: MensajesToastService,
     public dateService: FechaConversionService,
-    public confirmationService: ConfirmationService
+    public confirmationService: ConfirmationService,
+    public ingresoDiarioService: IngresoDiarioService
 
   ) {
     /*this.entidadSesion = localStorage.getItem("entidad") || '0';
@@ -65,6 +73,7 @@ export class AtencionMesasComponent implements OnInit {
     this.ptoAtencionSesion = localStorage.getItem("ptoAtencion") || '';*/
     this.fechaActual = new Date();
     this.fechaFormateada = this.dateService.formatearFechaDDYYMMM(this.fechaActual);
+    
   
   }
   botonesAccionesPedido() {
@@ -72,27 +81,39 @@ export class AtencionMesasComponent implements OnInit {
       { id: 1, icon: 'pi pi-user-plus', texto: 'Agregar cliente', classBtn: 'p-button-secondary' },
       { id: 2, icon: 'pi pi-print', texto: 'Comanda', classBtn: 'p-button-secondary' },
       { id: 3, icon: 'pi pi-shopping-cart', texto: 'Cobrar', classBtn: 'p-button-success' },
-      { id: 4, icon: 'pi pi-ban', texto: 'Anular', classBtn: 'p-button-danger' },
+      { id: 4, icon: 'pi pi-plus', texto: 'Descuento', classBtn: 'p-button-info' },
+      { id: 5, icon: 'pi pi-ban', texto: 'Anular', classBtn: 'p-button-danger' },
     ];
+  }
+
+  botonesMetodoPago(){
+    this.metodosPagos = [
+      { id: 1, icon: 'pi pi-money-bill', texto: 'Efectivo', classBtn: 'p-button-secondary' },
+      { id: 2, icon: 'pi pi-credit-card', texto: 'Tarjeta', classBtn: 'p-button-secondary' },
+      { id: 3, icon: 'pi pi-table', texto: 'Otros', classBtn: 'p-button-secondary' }
+    ];
+    this.metodoPagoSeleccionado = this.metodosPagos[0];
   }
 
   accionPedidoMesa(button: any) {
     //acción agregar cliente        
     if (button.id == 1) {
       this.mostrarModalAgregarCliente = true;
-    } else if(button.id==4){
+    } else if(button.id==5){
       this.mostrarConfirmarAnulacion = true;
     
     } else if(button.id==3){
       this.mostrarCobrarPrincipal = true;
+      this.botonesMetodoPago();
+     // this.metodoPagoSeleccionado.id= 1;
+    } else if(button.id==4){
+      this.mostrarDsctoGlobal = true;
     }
   } 
 
   ngOnInit(): void {
+    this.verificarAperturaCaja();
     
-    this.listarMesasLocal();
-    this.listarProductosPorPedir();
-
   }
 
   seleccionarMesa(seleccionarMesa: MesasLocalResponse) {
@@ -102,6 +123,7 @@ export class AtencionMesasComponent implements OnInit {
     this.mostrarModalPedido = true;
     if (this.mesaSeleccionada.nroPedido != null || this.mesaSeleccionada.seriePedido != null) {
       this.listarPedidosPorMesa(this.mesaSeleccionada.seriePedido, this.mesaSeleccionada.nroPedido);
+      this.calcularMontoTotal();
     }  
     this.botonesAccionesPedido();
   }
@@ -143,8 +165,6 @@ export class AtencionMesasComponent implements OnInit {
         }
       })
     ).subscribe();
-    
-  
   }
 
   seleccionarProducto(event: any) {
@@ -165,6 +185,7 @@ export class AtencionMesasComponent implements OnInit {
   }
 
   listarPedidosPorMesa(seriePedido: string, nroPedido: string) {
+    this.loading = true;
     let itemPedido = 0;
     let request = new BuscarPedidosMesaRequest(seriePedido, nroPedido, itemPedido, "","");
     request.seriePedido = seriePedido;
@@ -180,12 +201,11 @@ export class AtencionMesasComponent implements OnInit {
 
       },
       complete: () => {
-
+        this.calcularMontoTotal();
+        this.loading = false;
       },
     });
   }
-
- 
 
   cobrarMesa(event: Event, mesa: MesasLocalResponse) {
     event.stopPropagation();
@@ -195,18 +215,15 @@ export class AtencionMesasComponent implements OnInit {
 
   agregarPedido() {
     if (this.cantidadPedido == '') {
-      alert("no puede agregar.");
+      this.mensajeToast.showWarn('Advertencia', 'Debe agregar un dígito válido.')
+    } else {
+      if (this.mesaSeleccionada.nroPedido != null || this.mesaSeleccionada.seriePedido != null) {
+        this.actualizarProductosPedido();
+      }
+      else {
+        this.crearPedido();
+      }
     }
-    if (this.mesaSeleccionada.nroPedido != null || this.mesaSeleccionada.seriePedido != null) {
-      this.actualizarProductosPedido();
-    }
-    else {
-      this.crearPedido();
-    }
-
-
-
-
   }
 
   crearPedido() {
@@ -226,12 +243,34 @@ export class AtencionMesasComponent implements OnInit {
         this.mesas = [];
       },
       complete: () => {
-        this.selectedProducto = new ProductosPorPedirResponse();
+       
         this.loading = false;
       },
     });
   }
 
+  verificarAperturaCaja(){
+    let request = new BuscarAperturaCajaRequest("",this.fechaFormateada);
+    this.ingresoDiarioService.verficarAperturaCaja(request).subscribe({
+      next: (data: any) => {
+        if (data.codigo == 0) {
+          this.verificarApertura = data.respuesta.apertura;
+          if(this.verificarApertura){
+            this.listarMesasLocal();
+            this.listarProductosPorPedir();
+          }
+          
+        }
+      },
+      error: (errorResponse: any) => {
+
+      },
+      complete: () => {
+          this.loading = false;
+      },
+    });
+
+  }
   actualizarProductosPedido() {
     this.loading = true;
     let request = new AgregarProductoPedidoRequest(this.mesaSeleccionada.seriePedido, this.mesaSeleccionada.nroPedido,
@@ -239,6 +278,7 @@ export class AtencionMesasComponent implements OnInit {
     this.atencionMesasService.agregarProductoPedido(request).subscribe({
       next: (data: any) => {
         if (data.codigo == 0) {
+          this.mensajeToast.showSuccess("Producto agregado", this.selectedProducto.desProducto);
           this.listarPedidosPorMesa(this.mesaSeleccionada.seriePedido, this.mesaSeleccionada.nroPedido);
         }
       },
@@ -246,12 +286,19 @@ export class AtencionMesasComponent implements OnInit {
         this.mesas = [];
       },
       complete: () => {
-        this.mensajeToast.showSuccess("Producto agregado", this.selectedProducto.desProducto);
+        this.calcularMontoTotal();
         this.selectedProducto = new ProductosPorPedirResponse();
         this.cantidadPedido = '0';
         this.loading = false;
       },
     });
+  }
+
+  calcularMontoTotal(){
+    for(let pedidoItem of this.pedidosMesa){
+        this.montoTotalPagar =  this.montoTotalPagar + pedidoItem.subTotal;
+    }
+    console.log(this.montoTotalPagar);
   }
 
   limpiarCalculadora() {
