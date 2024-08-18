@@ -250,6 +250,7 @@ export class AtencionMesasComponent implements OnInit {
   }
 
   verificarAperturaCaja(){
+    this.loading = true;
     let request = new BuscarAperturaCajaRequest("",this.fechaFormateada);
     this.ingresoDiarioService.verficarAperturaCaja(request).subscribe({
       next: (data: any) => {
