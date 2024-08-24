@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConfirmationService } from 'primeng/api';
 import { Table } from 'primeng/table';
-import { catchError, filter, finalize, map, of, tap } from 'rxjs';
+import { catchError, filter, finalize, forkJoin, lastValueFrom, map, of, tap } from 'rxjs';
 import { CajaModel } from 'src/app/models/caja';
 import { AgregarProductoPedidoRequest } from 'src/app/models/comercial/atencion-mesas/agregar-producto-pedido-request.model';
 import { AsignarMesaPedidoRequest } from 'src/app/models/comercial/atencion-mesas/asignar-mesa-pedido-request.model';
@@ -128,44 +128,7 @@ export class AtencionMesasComponent implements OnInit {
     this.botonesAccionesPedido();
   }
 
-  listarMesasLocal() {
-    this.loading = true;
-    let request = new BuscarMesasRequest(0, 0, this.fechaFormateada, "%");
-    this.atencionMesasService.listadoMesasLocal(request).pipe(
-      filter((response: RootListarMesasLocalResponse) => response.codigo === 0),
-      tap((response: RootListarMesasLocalResponse) => {
-        this.mesas = response.respuesta;
-      }),
-      catchError((error: any) => {
-        this.mesas = [];
-        return of(error);  
-      }),
-      finalize(() => {
-        this.loading = false;
-      })
-    ).subscribe();
-  }
-
-  listarProductosPorPedir() {
-    this.loading = true;
-    let request = new BuscarProductosPorPedirRequest("", 0, "", "%");
-    this.atencionMesasService.listadoProductosPorPedir(request).pipe(
-      tap((data: RootListarProductosPorPedirResponse) => {
-        if (data.codigo === 0) {
-          this.productosPorPedir = data.respuesta;
-        }
-      }),
-      catchError((error: any) => {
-        this.productosPorPedir = [];
-        return of(error);
-      }),
-      tap({
-        complete: () => {
-         this.loading = false;
-        }
-      })
-    ).subscribe();
-  }
+ 
 
   seleccionarProducto(event: any) {
     this.cantidadPedido = '0';
@@ -249,28 +212,104 @@ export class AtencionMesasComponent implements OnInit {
     });
   }
 
-  verificarAperturaCaja(){
-    let request = new BuscarAperturaCajaRequest("",this.fechaFormateada);
-    this.ingresoDiarioService.verficarAperturaCaja(request).subscribe({
-      next: (data: any) => {
-        if (data.codigo == 0) {
-          this.verificarApertura = data.respuesta.apertura;
-          if(this.verificarApertura){
-            this.listarMesasLocal();
-            this.listarProductosPorPedir();
-          }
-          
-        }
-      },
-      error: (errorResponse: any) => {
-
-      },
-      complete: () => {
-          this.loading = false;
-      },
+  verificarAperturaCaja() {
+    let request = new BuscarAperturaCajaRequest("", this.fechaFormateada);
+    this.loading = true
+    this.ingresoDiarioService.verficarAperturaCaja(request).pipe(
+      catchError((errorResponse: any) => {
+        this.mensajeToast.errorServicioConsulta(errorResponse);
+        this.loading = false
+        return of(null);
+      }), 
+    ).subscribe((data: any) => { 
+      this.verificarApertura = data.respuesta.apertura;
+      if (data && data.codigo === 0 && data.respuesta.apertura) {
+       this.cargarDatos();
+      } else {
+        this.loading = false;
+        
+        //this.mensajeToast.showError('Error', 'La caja no está aperturada.');
+      }
     });
-
   }
+  
+
+  async cargarDatos() {
+    try {
+      this.loading = true
+      const [mesas, productos] = await Promise.all([
+        this.listarMesasLocal(),
+        this.listarProductosPorPedir() 
+      ]);
+      this.mesas = [...mesas]; 
+      this.productosPorPedir = [...productos]
+    } finally {
+      this.loading = false;
+    }
+  }
+  async listarMesasLocal(): Promise<MesasLocalResponse[]> {
+    try {
+      let request = new BuscarMesasRequest(0, 0, this.fechaFormateada, "%");
+      const rstaServicio: any = await lastValueFrom(this.atencionMesasService.listadoMesasLocal(request));
+      const { codigo, respuesta } = rstaServicio;
+      return codigo === 0 ? respuesta : [];
+    } catch (error) {
+      console.error('Error al obtener los datos de la tabla:', error);
+      return [];
+    }
+  }
+
+  async listarProductosPorPedir(): Promise<ProductosPorPedirResponse[]> {
+    try {
+      let request = new BuscarProductosPorPedirRequest("", 0, "", "%");
+      const rstaServicio: any = await lastValueFrom(this.atencionMesasService.listadoProductosPorPedir(request));
+      const { codigo, respuesta } = rstaServicio;
+      return codigo === 0 ? respuesta : [];
+    } catch (error) {
+      console.error('Error al obtener los datos de la tabla:', error);
+      return [];
+    }
+  }
+
+  // listarMesasLocal() {
+  //   this.loading = true;
+  //   let request = new BuscarMesasRequest(0, 0, this.fechaFormateada, "%");
+  //   this.atencionMesasService.listadoMesasLocal(request).pipe(
+  //     filter((response: RootListarMesasLocalResponse) => response.codigo === 0),
+  //     tap((response: RootListarMesasLocalResponse) => {
+  //       this.mesas = response.respuesta;
+  //     }),
+  //     catchError((error: any) => {
+  //       this.mesas = [];
+  //       return of(error);  
+  //     }),
+  //     finalize(() => {
+  //       this.loading = false;
+  //     })
+  //   ).subscribe();
+  // }
+
+  // listarProductosPorPedir() {
+  //   this.loading = true;
+  //   let request = new BuscarProductosPorPedirRequest("", 0, "", "%");
+  //   this.atencionMesasService.listadoProductosPorPedir(request).pipe(
+  //     tap((data: RootListarProductosPorPedirResponse) => {
+  //       if (data.codigo === 0) {
+  //         this.productosPorPedir = data.respuesta;
+  //       }
+  //     }),
+  //     catchError((error: any) => {
+  //       this.productosPorPedir = [];
+  //       return of(error);
+  //     }),
+  //     tap({
+  //       complete: () => {
+  //        this.loading = false;
+  //       }
+  //     })
+  //   ).subscribe();
+  // }
+
   actualizarProductosPedido() {
     this.loading = true;
     let request = new AgregarProductoPedidoRequest(this.mesaSeleccionada.seriePedido, this.mesaSeleccionada.nroPedido,

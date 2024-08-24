@@ -22,6 +22,8 @@ export class MensajesToastService{
     showError(summary: string,  details: string) {
         this.messageService.add({severity:'error', summary: summary, detail: details});
     }
+
+    
     
     showCustom(summary: string,  details: string, icon: string) {
         this.messageService.add({severity:'custom', summary: summary, detail: details, icon: icon});
@@ -43,4 +45,18 @@ export class MensajesToastService{
         this.messageService.clear();
         this.messageService.add({key: 'c', sticky: true, severity:'warn', summary:'Are you sure?', detail:'Confirm to proceed'});
     }
+
+    errorServicio(message: string, errorResponse: any) {
+        this.showError('Error', message)
+      }
+    
+      errorServicioConsulta(error: any) {
+        this.errorServicio('Se presentó un problema al realizar la consulta.', error)
+        return []
+      }
+    
+      errorServicioGuardado(error: any) {
+        this.errorServicio('Se presentó un problema al realizar acción.', error)
+        return []
+      }
 }

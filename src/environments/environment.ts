@@ -6,7 +6,7 @@ export const environment = {
   production: false,
 
   apiRest: {
-    host: "http://localhost:8001/api"
+    host: "http://localhost:8081/api"
     }
 };
 
