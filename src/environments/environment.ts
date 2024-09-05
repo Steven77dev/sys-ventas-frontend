@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-
+  version: '3.0.0',
   apiRest: {
     host: "http://localhost:8081/api"
     }

@@ -52,7 +52,7 @@
     <p-dialog [(visible)]="mostrarModalPedido" [modal]="true" [draggable]="false" [resizable]="false"
         [closeOnEscape]="false" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '80vw'}">
         <ng-template pTemplate="header">
-            <span class="p-dialog-title">Mesa {{mesaSeleccionada?.desMesa}} </span>
+            <span class="p-dialog-title">Mesa {{mesaSeleccionada.desMesa}} </span>
         </ng-template>
         <div class="grid">
             <div class="field sm:col-12 md:col-12 lg:col-5">
@@ -178,7 +178,7 @@
     <p-dialog [(visible)]="mostrarModalAgregarCliente" [modal]="true" [draggable]="false" [resizable]="false"
         [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
         <ng-template pTemplate="header">
-            <span class="p-dialog-title">Cliente {{mesaSeleccionada?.desCliente}} </span>
+            <span class="p-dialog-title">Cliente {{mesaSeleccionada.desCliente}} </span>
         </ng-template>
         <div class="grid">
         </div>

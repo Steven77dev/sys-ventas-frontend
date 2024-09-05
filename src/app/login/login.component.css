@@ -1,20 +1,36 @@
+/* Estructura principal */
 .login-container {
   display: flex;
+  height: 100vh; 
+}
+
+/* Estilo para el contenedor del formulario */
+.login-form-container {
+  width: 30%;
+  display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  align-items: center; 
+  padding: 40px;
 }
 
+/* Estilo para la tarjeta del login */
 .login-card {
-  width: 50%;
-  max-width: 500px;
-  padding: 2rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  max-width: 400px;
+  width: 100%;
 }
 
-@media (min-width: 768px) {
-  .login-card {
-    width: 70%;
-  }
+/* Estilo general para los campos del formulario */
+.field {
+  margin-bottom: 20px;
+}
+
+/* Estilo para la imagen de fondo en la parte derecha */
+.login-image-container {
+  width: 70%;
+}
+
+.login-image {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
 }

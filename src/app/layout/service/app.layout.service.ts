@@ -3,8 +3,8 @@ import { Subject } from 'rxjs';
 
 export interface AppConfig {
     inputStyle: string;
-    //colorScheme: string;
-    //theme: string;
+    colorScheme: string;
+    theme: string;
     ripple: boolean;
     menuMode: string;
     scale: number;
@@ -26,10 +26,10 @@ export class LayoutService {
 
     config: AppConfig = {
         ripple: false,
-        inputStyle: 'outlined',
+        inputStyle: 'filled',
         menuMode: 'static',
-        //colorScheme: 'light',
-        //theme: 'lara-light-indigo',
+        colorScheme: 'dark',
+        theme: 'mdc-dark-indigo',
         scale: 14,
     };
 

@@ -17,16 +17,16 @@ import { LayoutService } from './service/app.layout.service';
 				<i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
 				<span class="layout-menuitem-text">{{item.label}}</span>
 				<i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
-			</a>
-			<a *ngIf="(item.routerLink && !item.items) && item.visible !== false" (click)="itemClick($event)" [ngClass]="item.class" 
-			   [routerLink]="item.routerLink" routerLinkActive="active-route" [routerLinkActiveOptions]="item.routerLinkActiveOptions||{ paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"
-               [fragment]="item.fragment" [queryParamsHandling]="item.queryParamsHandling" [preserveFragment]="item.preserveFragment" 
-               [skipLocationChange]="item.skipLocationChange" [replaceUrl]="item.replaceUrl" [state]="item.state" [queryParams]="item.queryParams"
-               [attr.target]="item.target" tabindex="0" pRipple>
-				<i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
-				<span class="layout-menuitem-text">{{item.label}}</span>
-				<i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
-			</a>
+			</a>  
+			<a *ngIf="(item.routerLink && !item.items) && item.visible !== false" 
+                (click)="itemClick($event)" 
+                [ngClass]="item.class" 
+                tabindex="0" 
+                pRipple>
+                    <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
+                    <span class="layout-menuitem-text">{{item.label}}</span>
+                    <i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
+                </a>
 
 			<ul *ngIf="item.items && item.visible !== false" [@children]="submenuAnimation">
 				<ng-template ngFor let-child let-i="index" [ngForOf]="item.items">
@@ -92,15 +92,14 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.key = this.parentKey ? this.parentKey + '-' + this.index : String(this.index);
-
+        this.key = this.parentKey ? this.parentKey + '-' + this.index : String(this.index); 
         if (this.item.routerLink) {
             this.updateActiveStateFromRoute();
         }
     }
 
-    updateActiveStateFromRoute() {
-        let activeRoute = this.router.isActive(this.item.routerLink[0], { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' });
+    updateActiveStateFromRoute() { 
+        let activeRoute = this.router.isActive(this.item.routerLink, { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' });
 
         if (activeRoute) {
             this.menuService.onMenuStateChange({ key: this.key, routeEvent: true });
@@ -108,24 +107,48 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
     }
 
     itemClick(event: Event) {
-        // avoid processing disabled items
+        event.preventDefault();
+    
+        // Verifica si el item está deshabilitado
         if (this.item.disabled) {
-            event.preventDefault();
             return;
         }
-
-        // execute command
+    
+        // Ejecuta comandos si los hay
         if (this.item.command) {
             this.item.command({ originalEvent: event, item: this.item });
         }
-
-        // toggle active state
+    
+        // Verifica si el item tiene un routerLink para navegar
+        if (this.item.routerLink) {
+            if (Array.isArray(this.item.routerLink)) {
+                this.router.navigate(this.item.routerLink, {
+                    queryParams: this.item.queryParams,
+                    fragment: this.item.fragment,
+                    skipLocationChange: this.item.skipLocationChange,
+                    replaceUrl: this.item.replaceUrl,
+                    state: this.item.state
+                });
+            } else {
+                this.router.navigate([this.item.routerLink], {
+                    queryParams: this.item.queryParams,
+                    fragment: this.item.fragment,
+                    skipLocationChange: this.item.skipLocationChange,
+                    replaceUrl: this.item.replaceUrl,
+                    state: this.item.state
+                });
+            }
+        }
+    
+        // Togglea el estado activo si hay submenú
         if (this.item.items) {
             this.active = !this.active;
         }
-
+    
+        // Envía el cambio de estado al menú
         this.menuService.onMenuStateChange({ key: this.key });
     }
+    
 
     get submenuAnimation() {
         return this.root ? 'expanded' : (this.active ? 'expanded' : 'collapsed');

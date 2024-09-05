@@ -1,28 +1,44 @@
-<div class="login-container " >
+<div class="login-container">
+  <!-- Izquierda: Formulario de login (30% ancho) -->
+  <div class="login-form-container">
+    <div class="col-10">
+      <img src="assets/layout/images/logo_kasamama.png" style="width: 20vh;margin: 0 auto;display: block;" />
+      <!-- <h2 style="text-align: center;">BIENVENIDO</h2> -->
+      <h6 style="text-align: center;">Ingresa tu usuario y contraseña</h6>
+      <form [formGroup]="loginForm" class="p-fluid">
+        <div class="field">
+          <span class="p-float-label">
+            
+            <input pInputText id="usuario" formControlName="usuario" />
+            <label htmlFor="usuario">Usuario</label>
+            <small class="p-error" *ngIf="loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched">
+              Ingrese un usuario válido.
+            </small>
+          </span>
+        </div>
+        <div class="field">
+          <span class="p-float-label">
+            <p-password id="password" [feedback]="false"  [toggleMask]="true" formControlName="password"></p-password>
+            <label htmlFor="password">Contraseña</label>
+            <small class="p-error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+              Contraseña es obligatoria.
+            </small>
+          </span>
 
-  <div class="login-card card">
-    <h1>Iniciar sesión</h1>
-    <form [formGroup]="loginForm" (ngSubmit)="login()" class="p-fluid">
-      <div class="field">
-        <label htmlFor="email">Usuario</label>
-        <input pInputText id="email" formControlName="email" />
-        <small class="p-error" *ngIf="loginForm.controls['email'].invalid && loginForm.controls['email'].touched">
-          Ingrese un usuario válido.
-        </small>
-      </div>
-      <div class="field">
-        <label htmlFor="email">Contraseña</label>
-        <p-password name="password" id="password"  [feedback]="false" formControlName="password" ></p-password>
-        <small class="p-error" *ngIf="loginForm.controls['password'].invalid && loginForm.controls['password'].touched">
-          Contraseña es obligatorio.
-        </small>
-      </div>
-      <div class="field">
-     
-        <button pButton type="submit"  label="Ingresar" class="p-button-success" [disabled]="loginForm.invalid"></button>
-      </div>
-    </form>
-    <p-toast position="top-right"></p-toast>
-    <app-loading [show]="cargando"></app-loading>
+
+        </div>
+        <div class="field">
+          <button pButton type="submit" label="Iniciar sesión" (click)="login()" class="p-button-success"></button>
+        </div>
+        <small style="font-weight: bold;display: block;text-align: center;">SGR v3.0.0 </small>
+      </form>
+      <p-toast position="top-right"></p-toast>
+      <app-loading [show]="cargando"></app-loading>
+    </div>
+  </div>
+
+  <!-- Derecha: Imagen (70% ancho) -->
+  <div class="login-image-container">
+    <img src="assets/layout/images/bg-20522157903.jpg" alt="Imagen de fondo" class="login-image" />
   </div>
 </div>
